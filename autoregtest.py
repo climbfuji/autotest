@@ -186,9 +186,9 @@ def parse_arguments():
     #
     return (fork, branch, system, compiler, project, rtconfig, keep, email)
 
-def get_workdir(now, fork, branch):
-    tmpdir = tempfile.mkdtemp(prefix='regtest_ufs_weather_model_{}_{}_{}_'.format(
-                      fork, branch.replace('/','-'), now.strftime('%Y%m%dT%H%M%S')))
+def get_workdir(now, fork, branch, compiler):
+    tmpdir = tempfile.mkdtemp(prefix='regtest_ufs_weather_model_{}_{}_{}_{}_'.format(
+             fork, branch.replace('/','-'), compiler, now.strftime('%Y%m%dT%H%M%S')))
     logging.info('Setting up temporary directory {}'.format(tmpdir))
     return tmpdir
 
@@ -226,7 +226,7 @@ def run_tests(now, system, compiler, project, rtconfig, keep, tmpdir):
     os.chdir(BASEDIR)
     return rtlog
 
-def check_logs(tmpdir, rtlog, keep, email):
+def check_logs(system, compiler, tmpdir, rtlog, keep, email):
     # Check for the string indicating success in the regression test log
     with open(rtlog) as f:
         if RT_SUCCESSFUL in f.read():
@@ -235,15 +235,15 @@ def check_logs(tmpdir, rtlog, keep, email):
             success = False
     # Delete temporary run directory unless requested to keep it
     if success and keep:
-        subject = 'Regression tests passed'
+        subject = '{}/{}: regression tests passed'.format(system, compiler)
         message = 'Regression tests passed, see regression test log {} and run directory {}.'.format(rtlog, tmpdir)
         logging.info(message)
     elif success and not keep:
-        subject = 'Regression tests passed'
+        subject = '{}/{}: regression tests passed'.format(system, compiler)
         message = 'Regression tests passed, see regression test log {}.'.format(rtlog)
         logging.info(message)
     else:
-        subject = 'Regression tests did NOT PASS'
+        subject = '{}/{}: regression tests did NOT PASS'.format(system, compiler)
         message = 'Regression tests did NOT PASS, check latest regression test log {} and run directory {}'.format(rtlog, tmpdir)
         logging.error(message)
     # Send out email
@@ -261,10 +261,10 @@ def main():
     setup_logging()
     logging.info('Starting automatic regression test')
     (fork, branch, system, compiler, project, rtconfig, keep, email) = parse_arguments()
-    tmpdir = get_workdir(now, fork, branch)
+    tmpdir = get_workdir(now, fork, branch, compiler)
     checkout_code(fork, branch, tmpdir)
     rtlog = run_tests(now, system, compiler, project, rtconfig, keep, tmpdir)
-    success = check_logs(tmpdir, rtlog, keep, email)
+    success = check_logs(system, compiler, tmpdir, rtlog, keep, email)
     cleanup(success, keep, tmpdir)
     logging.info('Finished automatic regression test')
 
