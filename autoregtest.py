@@ -38,6 +38,7 @@ FORKS = {
         'branches' : [ 'develop' ],
         'url'      : 'https://github.com/ufs-community/ufs-weather-model',
         },
+    # For development
     'dom' : {
         'branches' : [ 'nems_machine_env_var' ],
         'url'      : 'https://github.com/climbfuji/ufs-weather-model',
