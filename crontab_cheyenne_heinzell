@@ -4,6 +4,6 @@
 MAILTO="heinzell@ucar.edu"
 SHELL=/bin/bash
 
-00 22 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel.sh >>cron/autoregtest_intel_cron.out 2>>cron/autoregtest_intel_cron.err
+# Note: something kills cron jobs around 1am every day on Cheyenne, avoid!
+00 02 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel.sh >>cron/autoregtest_intel_cron.out 2>>cron/autoregtest_intel_cron.err
 00 04 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_gnu.sh   >>cron/autoregtest_gnu_cron.out   2>>cron/autoregtest_gnu_cron.err
-

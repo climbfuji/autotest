@@ -52,7 +52,7 @@ SYSTEMS = {
         'default_compiler' : 'intel',
         'default_project'  : 'P48503002',
         'default_rtconfig' : {
-            'intel' : 'rt.conf', # change to rt_ccpp_dtc.conf ?
+            'intel' : 'rt_intel.conf',
             'gnu'   : 'rt_gnu.conf',
             },
         },
