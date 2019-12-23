@@ -35,13 +35,8 @@ FORKS = {
         'url'      : 'https://github.com/NCAR/ufs-weather-model',
         },
     'emc' : {
-        'branches' : [ 'develop' ],
+        'branches' : [ 'develop', 'ufs_public_release' ],
         'url'      : 'https://github.com/ufs-community/ufs-weather-model',
-        },
-    # For development
-    'dom' : {
-        'branches' : [ 'nems_machine_env_var' ],
-        'url'      : 'https://github.com/climbfuji/ufs-weather-model',
         },
     }
 
@@ -123,7 +118,7 @@ def execute(cmd):
         message = 'Execution of command {} failed, exit code {}\n'.format(cmd, status)
         message += '    stdout: "{}"\n'.format(stdout)
         message += '    stderr: "{}"'.format(stderr)
-        raise Exception(message)
+        logging.error(message)
     return (status, stdout, stderr)
 
 def setup_logging():
@@ -227,7 +222,7 @@ def run_tests(now, system, compiler, project, rtconfig, keep, tmpdir):
     os.chdir(BASEDIR)
     return rtlog
 
-def check_logs(system, compiler, tmpdir, rtlog, keep, email):
+def check_logs(system, compiler, fork, branch, tmpdir, rtlog, keep, email):
     # Check for the string indicating success in the regression test log
     with open(rtlog) as f:
         if RT_SUCCESSFUL in f.read():
@@ -236,18 +231,19 @@ def check_logs(system, compiler, tmpdir, rtlog, keep, email):
             success = False
     # Delete temporary run directory unless requested to keep it
     if success and keep:
-        subject = '{}/{}: regression tests passed'.format(system, compiler)
+        subject = '{}/{}:{}:{} regression tests passed'.format(system, compiler, fork, branch)
         message = 'Regression tests passed, see regression test log {} and run directory {}.'.format(rtlog, tmpdir)
         logging.info(message)
     elif success and not keep:
-        subject = '{}/{}: regression tests passed'.format(system, compiler)
+        subject = '{}/{}:{}:{} regression tests passed'.format(system, compiler, fork, branch)
         message = 'Regression tests passed, see regression test log {}.'.format(rtlog)
         logging.info(message)
     else:
-        subject = '{}/{}: regression tests did NOT PASS'.format(system, compiler)
+        subject = '{}/{}:{}:{} regression tests did NOT PASS'.format(system, compiler, fork, branch)
         message = 'Regression tests did NOT PASS, check latest regression test log {} and run directory {}'.format(rtlog, tmpdir)
         logging.error(message)
     # Send out email
+    # DH* TODO use send_mail command instead of replicating it here ? No if we only do it here? Use Python logging email handler?
     cmd = 'echo "{}" | mail -a "{}" -s "{}" {}'.format(message, rtlog, subject, email)
     (status, stdout, stderr) = execute(cmd)
     return success
@@ -265,7 +261,7 @@ def main():
     tmpdir = get_workdir(now, fork, branch, compiler)
     checkout_code(fork, branch, tmpdir)
     rtlog = run_tests(now, system, compiler, project, rtconfig, keep, tmpdir)
-    success = check_logs(system, compiler, tmpdir, rtlog, keep, email)
+    success = check_logs(system, compiler, fork, branch, tmpdir, rtlog, keep, email)
     cleanup(success, keep, tmpdir)
     logging.info('Finished automatic regression test')
 

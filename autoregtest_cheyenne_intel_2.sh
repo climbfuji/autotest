@@ -8,6 +8,6 @@ module load python/3.6.8
 
 cd /glade/u/home/heinzell/autoregtest/ufs-weather-model/log
 
-# DTC: dtc/develop
+# EMC: ufs_public_release
 now=$(date "+%Y%m%dT%H%M%S")
-nohup ../autoregtest.py -f dtc -b dtc/develop -s cheyenne -c intel > autoregtest_intel_dtc_develop_${now}.log 2>&1 &
+nohup ../autoregtest.py -f emc -b ufs_public_release -r rt.conf -s cheyenne -c intel > autoregtest_intel_ufs_public_release_${now}.log 2>&1 &
