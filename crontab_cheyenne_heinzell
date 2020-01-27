@@ -5,8 +5,11 @@ MAILTO="heinzell@ucar.edu"
 SHELL=/bin/bash
 
 # Note: something kills cron jobs around 1am every day on Cheyenne, avoid!
-00 02 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel.sh >>cron/autoregtest_intel_cron.out 2>>cron/autoregtest_intel_cron.err
-00 04 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_gnu.sh   >>cron/autoregtest_gnu_cron.out   2>>cron/autoregtest_gnu_cron.err
+00 02 * * 3,7 nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel.sh >>cron/autoregtest_intel_cron.out 2>>cron/autoregtest_intel_cron.err
+00 04 * * 3,7 nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_gnu.sh   >>cron/autoregtest_gnu_cron.out   2>>cron/autoregtest_gnu_cron.err
 
-00 20 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel_2.sh >>cron/autoregtest_intel_2_cron.out 2>>cron/autoregtest_intel_2_cron.err
-00 22 * * * nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_gnu_2.sh   >>cron/autoregtest_gnu_2_cron.out   2>>cron/autoregtest_gnu_2_cron.err
+00 20 * * 3,7 nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_intel_2.sh >>cron/autoregtest_intel_2_cron.out 2>>cron/autoregtest_intel_2_cron.err
+00 22 * * 3,7 nice -n 19 /glade/u/home/heinzell/autoregtest/ufs-weather-model/autoregtest_cheyenne_gnu_2.sh   >>cron/autoregtest_gnu_2_cron.out   2>>cron/autoregtest_gnu_2_cron.err
+
+# Clean up old files in scratch directory
+05 00 * * 3,7 find /glade/scratch/heinzell -type f -mtime +7 -execdir rm -fv -- '{}' \; >>cron/cleanup_scratch.out 2>>cron/cleanup_scratch.err

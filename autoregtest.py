@@ -50,6 +50,7 @@ SYSTEMS = {
             'intel' : 'rt_intel.conf',
             'gnu'   : 'rt_gnu.conf',
             },
+        'tempdir' : '/glade/scratch/heinzell/autoregtest',
         },
     'hera' : {
         'compilers'        : [ 'intel' ],
@@ -58,6 +59,7 @@ SYSTEMS = {
         'default_rtconfig' : {
             'intel' : 'rt.conf',
             },
+        'tempdir' : '/scratch1/BMC/gmtb/Dom.Heinzeller/autoregtest',
         },
     }
 
@@ -182,11 +184,16 @@ def parse_arguments():
     #
     return (fork, branch, system, compiler, project, rtconfig, keep, email)
 
-def get_workdir(now, fork, branch, compiler):
-    tmpdir = tempfile.mkdtemp(prefix='regtest_ufs_weather_model_{}_{}_{}_{}_'.format(
-             fork, branch.replace('/','-'), compiler, now.strftime('%Y%m%dT%H%M%S')))
-    logging.info('Setting up temporary directory {}'.format(tmpdir))
-    return tmpdir
+def get_workdir(now, system, fork, branch, compiler):
+    """Create a temporary working directory underneath the system-dependent tempdir"""
+    tempdir = SYSTEMS[system]['tempdir']
+    if not os.path.isdir(tempdir):
+        os.makedirs(tempdir)
+    workdir = tempfile.mkdtemp(prefix='regtest_ufs_weather_model_{}_{}_{}_{}_'.format(
+              fork, branch.replace('/','-'), compiler, now.strftime('%Y%m%dT%H%M%S')),
+              dir=tempdir)
+    logging.info('Setting up work directory {}'.format(workdir))
+    return workdir
 
 def checkout_code(fork, branch, tmpdir):
     url = FORKS[fork]['url']
@@ -258,7 +265,7 @@ def main():
     setup_logging()
     logging.info('Starting automatic regression test')
     (fork, branch, system, compiler, project, rtconfig, keep, email) = parse_arguments()
-    tmpdir = get_workdir(now, fork, branch, compiler)
+    tmpdir = get_workdir(now, system, fork, branch, compiler)
     checkout_code(fork, branch, tmpdir)
     rtlog = run_tests(now, system, compiler, project, rtconfig, keep, tmpdir)
     success = check_logs(system, compiler, fork, branch, tmpdir, rtlog, keep, email)
