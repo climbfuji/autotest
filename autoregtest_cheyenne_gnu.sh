@@ -10,4 +10,4 @@ cd /glade/u/home/heinzell/autoregtest/ufs-weather-model/log
 
 # DTC: dtc/develop
 now=$(date "+%Y%m%dT%H%M%S")
-nohup ../autoregtest.py -f dtc -b dtc/develop -s cheyenne -c gnu > autoregtest_gnu_dtc_develop_${now}.log 2>&1 &
+nohup ../autoregtest.py -f emc -b develop -s cheyenne -c gnu > autoregtest_gnu_emc_develop_${now}.log 2>&1 &
