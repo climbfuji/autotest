@@ -47,7 +47,7 @@ SYSTEMS = {
         'default_compiler' : 'intel',
         'default_project'  : 'P48503002',
         'default_rtconfig' : {
-            'intel' : 'rt_intel.conf',
+            'intel' : 'rt.conf',
             'gnu'   : 'rt_gnu.conf',
             },
         'tempdir' : '/glade/scratch/heinzell/autoregtest',
