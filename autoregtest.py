@@ -222,8 +222,10 @@ def run_tests(now, system, compiler, project, rtconfig, keep, tmpdir):
     #
     rtlog = now.strftime(RT_LOG)
     logging.info('Launching regression test, logging to {} ... '.format(rtlog))
-    cmd = 'NEMS_MACHINE={} NEMS_COMPILER={} ACCNR={} ./rt.sh -l {} {} > {} 2>&1'.format(
-                                  system, compiler, project, rtconfig, keep_flag, rtlog)
+    #cmd = 'NEMS_MACHINE={} NEMS_COMPILER={} ACCNR={} ./rt.sh -l {} {} > {} 2>&1'.format(
+    #                              system, compiler, project, rtconfig, keep_flag, rtlog)
+    cmd = 'RT_MACHINE={} RT_COMPILER={} ACCNR={} ./rt.sh -l {} {} > {} 2>&1'.format(
+                              system, compiler, project, rtconfig, keep_flag, rtlog)
     (status, stdout, stderr) = execute(cmd)
     #
     os.chdir(BASEDIR)
